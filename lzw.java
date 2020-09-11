@@ -6,7 +6,7 @@ public class lzw{
 	private String inputFileName; //File name that the user enters
 	
 	public lzw (String fileName) {
-		for (int i = 0; i<256;i++) {
+		for (int i = 0; i<128;i++) {
 			dictionary.add (""+(char)i); //Adds each ascii symbol to the dictionary
 		}
 		inputFileName = fileName;
@@ -65,4 +65,3 @@ public class lzw{
 		encoder.encode();
 	}
 }
-
