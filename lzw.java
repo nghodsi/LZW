@@ -9,9 +9,9 @@ public class lzw {
 		for (int i = 0; i<256;i++) {
 			dictionary.add (""+(char)i); //Adds each ascii symbol to the dictionary
 		}
-		Scanner kb = new Scanner(System.in); //Asks the user for the file name and saves it as a String
+		Scanner keyboard = new Scanner(System.in); //Asks the user for the file name and saves it as a String
         System.out.print("Enter filename here: ");
-        inputFileName = kb.next();
+        inputFileName = keyboard.next();
 	}
 	
 	public void encode () {
