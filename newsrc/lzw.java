@@ -183,6 +183,6 @@ public class lzw {
 		lzw cipher = new lzw ();
 		cipher.encode();
 		cipher.decode("lzwOutput.txt");
-		//System.out.println(cipher.checkDecodedFile("decodedFile.txt", fileToEncodeName));
+		System.out.println(cipher.checkDecodedFile("decodedFile.txt", fileToEncodeName));
 	}
 }
