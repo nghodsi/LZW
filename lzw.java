@@ -116,7 +116,7 @@ public class lzw {
 			e.printStackTrace();
 		}
 		
-		//System.out.println("CodestreamList size: " + codestreamList.size());
+		System.out.println("CodestreamList size: " + codestreamList.size());
 		
 		return codestreamList;
 	}
