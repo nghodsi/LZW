@@ -4,7 +4,7 @@ import java.io.*;
 public class lzw { 
 	private static String fileToEncodeName;
 	//Maximum size of table (1024 for 10 bits)
-	private final int maxDictionarySize = 1024;
+	private final int maxDictionarySize = 9999999;
 	
 	public void encode () {
 		Scanner keyboard = new Scanner(System.in); //Asks the user for the file name and saves it as a String
@@ -20,6 +20,7 @@ public class lzw {
 	}
 	
 	//Initializes dictionary (ArrayList) with ASCII table <-- for Lucas & Navid's encoder
+	//O(1)
 	private ArrayList<String> initializeDictionary() {
 		//Size 1024 for 10 bits
 		ArrayList<String> dictionary = new ArrayList<String>(maxDictionarySize);
@@ -32,6 +33,7 @@ public class lzw {
 	}
 	
 	//Initializes dictionary (HashMap) with ASCII table <-- for decoder
+	//O(1)
 	private HashMap<Integer, String> initializeDictionary2() {
 		HashMap<Integer, String> dictionary = new HashMap<Integer, String>();
 			
@@ -43,6 +45,7 @@ public class lzw {
 	}
 	
 	//Generates codestream and prints it to 1st line of encoded .txt file
+	//O(n^2) because indexOf is inefficient
 	private void generateCodestream(String fileName, ArrayList<String> dictionary) {
 		ArrayList<Integer> codestream = new ArrayList<Integer>();
 		String P = "";
@@ -94,6 +97,7 @@ public class lzw {
 	}
 	
 	//Reads .txt file containing codestream and transfers all codes into an ArrayList
+	//runs in O(characters in file)
 	private ArrayList<Integer> catalogCodestream(String fileName) {
 		ArrayList<Integer> codestreamList = new ArrayList<Integer>();
 		
