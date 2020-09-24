@@ -15,16 +15,16 @@ public class lzw {
         fileToEncodeName = keyboard.next();
 		keyboard.close();
         
-		generateCodestream(fileToEncodeName, initializeDictionary());
+		generateCodestream(fileToEncodeName, initializeDictionaryForEncode());
 	}
 	
 	public void decode(String fileName) {
-		decodeCodestream(fileName, initializeDictionary2(), catalogCodestream(fileName));
+		decodeCodestream(fileName, initializeDictionaryForDecode(), catalogCodestream(fileName));
 	}
 	
 	//Initializes dictionary (ArrayList) with ASCII table <-- for Lucas & Navid's encoder
 	//O(1)
-	private ArrayList<String> initializeDictionary() {
+	private ArrayList<String> initializeDictionaryForEncode() {
 		//Size 1024 for 10 bits
 		ArrayList<String> dictionary = new ArrayList<String>(maxDictionarySize);
 			
@@ -37,7 +37,7 @@ public class lzw {
 	
 	//Initializes dictionary (HashMap) with ASCII table <-- for decoder
 	//O(1)
-	private HashMap<Integer, String> initializeDictionary2() {
+	private HashMap<Integer, String> initializeDictionaryForDecode() {
 		HashMap<Integer, String> dictionary = new HashMap<Integer, String>();
 			
 		for(int i = 0; i < 256; i++) {
@@ -51,7 +51,7 @@ public class lzw {
 	//O(n^2) because indexOf is inefficient
 	private void generateCodestream(String fileName, ArrayList<String> dictionaryAsArrayList) {
 		ArrayList<Integer> codestream = new ArrayList<Integer>();
-		String P = "";
+		String previousChar = "";
 		HashMap<String, Integer> dictionary = arrayListToHashMap(dictionaryAsArrayList);
 		try { //Tests code for errors while it's being executed
 			BufferedReader bReader = new BufferedReader(new FileReader(new File(fileName)));
@@ -59,32 +59,32 @@ public class lzw {
 			BufferedWriter bWriter = new BufferedWriter(new FileWriter(new File("lzwOutput.txt")));
 			
 			while (bReader.ready() && dictionary.size() < maxDictionarySize) {
-				char C = (char) bReader.read();
+				char currentChar = (char) bReader.read();
 				
-				if (dictionary.containsKey(P+C)) {
-					P=P+C;
+				if (dictionary.containsKey(previousChar+currentChar)) {
+					previousChar=previousChar+currentChar;
 				}
 				else {
 					//something is wrong, fix
-					bWriter.write (dictionary.get(P) + " ");
-					codestream.add(dictionary.get(P));
-					dictionary.put(P+C, (Integer)(dictionary.size()));
-					P=Character.toString(C);
+					bWriter.write (dictionary.get(previousChar) + " ");
+					codestream.add(dictionary.get(previousChar));
+					dictionary.put(previousChar+currentChar, (Integer)(dictionary.size()));
+					previousChar=Character.toString(currentChar);
 				}
 			}
 			
 			//cover last read
-			bWriter.write (dictionary.get(P) + " ");
-			codestream.add(dictionary.get(P));
+			bWriter.write (dictionary.get(previousChar) + " ");
+			codestream.add(dictionary.get(previousChar));
 			
 			//if dictionary reaches chosen bit limit
 			if(dictionary.size() >= maxDictionarySize) {
 				System.out.println("Maximum dictionary size (" +  dictionary.size() + ") reached - stopping compression");
 				
 				while(bReader.ready()) {
-					int c = bReader.read();
-					bWriter.write(c + " ");
-					codestream.add(c);
+					int character = bReader.read();
+					bWriter.write(character + " ");
+					codestream.add(character);
 				}
 			}
 			
@@ -118,10 +118,10 @@ public class lzw {
 		ArrayList<Integer> codestreamList = new ArrayList<Integer>();
 		
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
+			BufferedReader codeReader = new BufferedReader(new FileReader(new File(fileName)));
 			
 			String line = "";
-			if((line = br.readLine()) != null) {
+			if((line = codeReader.readLine()) != null) {
 				for(String code : line.split(" ")) {
 					//add character flush condition here
 					
@@ -131,7 +131,7 @@ public class lzw {
 				}
 			}
 			
-			br.close();
+			codeReader.close();
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -147,29 +147,31 @@ public class lzw {
 		String w = "" + (char) (int) codestreamList.remove(0);
 		StringBuffer decodedCodestream = new StringBuffer(w);
 		
-		for(int k : codestreamList) {
-			String entry;
+		for(int value : codestreamList) {
+			String currentEntry;
 			
-			if(dictionary.containsKey(k)) {
-				entry = dictionary.get(k);
+			if(dictionary.containsKey(value)) {
+				currentEntry = dictionary.get(value);
 			}
-			else if(k == dictionarySize) {
-				entry = w + w.charAt(0);
+			else if(value == dictionarySize) {
+				currentEntry = w + w.charAt(0);
 			}
 			else {
-				throw new IllegalArgumentException("Bad compressed k: " + k);
+				throw new IllegalArgumentException("Bad compressed value: " + value);
 			}
 			
-			decodedCodestream.append(entry);
-			dictionary.put(dictionarySize++, w + entry.charAt(0));
-			w = entry;
+			decodedCodestream.append(currentEntry);
+			
+			//rebuilds the dicitionary by adding the new string
+			dictionary.put(dictionarySize++, w + currentEntry.charAt(0));
+			w = currentEntry;
 		}
 		
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File ("decodedFile.txt")));
+			BufferedWriter decodedFileWriter = new BufferedWriter(new FileWriter(new File ("decodedFile.txt")));
 			
-			bw.write(decodedCodestream.toString());
-			bw.close();
+			decodedFileWriter.write(decodedCodestream.toString());
+			decodedFileWriter.close();
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -179,7 +181,7 @@ public class lzw {
 	private boolean checkDecodedFile(String unencodedFileName, String decodedFileName) {
 		try {
 			BufferedReader unencodedFileReader = new BufferedReader(new FileReader(new File(unencodedFileName)));
-			BufferedReader decodedFileReader = new BufferedReader(new FileReader(new File(ecodedFileName)));
+			BufferedReader decodedFileReader = new BufferedReader(new FileReader(new File(decodedFileName)));
 			
 			while(unencodedFileReader.ready() && decodedFileReader.ready()) {
 				if(unencodedFileReader.read() != decodedFileReader.read()) {
