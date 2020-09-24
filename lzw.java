@@ -159,23 +159,23 @@ public class lzw {
 		}
 	}
 	
-	//Checks decoded file with file that was originally encoded
-	private boolean checkDecodedFile(String fileName1, String fileName2) {
+	//Checks decoded file with file that was originally encoded (the unencoded version)
+	private boolean checkDecodedFile(String unencodedFileName, String decodedFileName) {
 		try {
-			BufferedReader br1 = new BufferedReader(new FileReader(new File(fileName1)));
-			BufferedReader br2 = new BufferedReader(new FileReader(new File(fileName2)));
+			BufferedReader unencodedFileReader = new BufferedReader(new FileReader(new File(unencodedFileName)));
+			BufferedReader decodedFileReader = new BufferedReader(new FileReader(new File(ecodedFileName)));
 			
-			while(br1.ready() && br2.ready()) {
-				if(br1.read() != br2.read()) {
-					br1.close();
-					br2.close();
+			while(unencodedFileReader.ready() && decodedFileReader.ready()) {
+				if(unencodedFileReader.read() != decodedFileReader.read()) {
+					unencodedFileReader.close();
+					decodedFileReader.close();
 					
 					return false;
 				}
 			}
 			
-			br1.close();
-			br2.close();
+			unencodedFileReader.close();
+			decodedFileReader.close();
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
