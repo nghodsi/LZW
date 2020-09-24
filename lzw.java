@@ -2,6 +2,9 @@ import java.util.*;
 import java.io.*;
 
 public class lzw { 
+	
+	//TODO: Migrate off of ArrayLists and onto HashMaps
+	//Document all the things, including time complexity
 	private static String fileToEncodeName;
 	//Maximum size of table (1024 for 10 bits)
 	private final int maxDictionarySize = 9999999;
@@ -46,10 +49,10 @@ public class lzw {
 	
 	//Generates codestream and prints it to 1st line of encoded .txt file
 	//O(n^2) because indexOf is inefficient
-	private void generateCodestream(String fileName, ArrayList<String> dictionary) {
+	private void generateCodestream(String fileName, ArrayList<String> dictionaryAsArrayList) {
 		ArrayList<Integer> codestream = new ArrayList<Integer>();
 		String P = "";
-		
+		HashMap<String, Integer> dictionary = arrayListToHashMap(dictionaryAsArrayList);
 		try { //Tests code for errors while it's being executed
 			BufferedReader bReader = new BufferedReader(new FileReader(new File(fileName)));
 			//Creates output file called lzwOutput.txt
@@ -58,20 +61,21 @@ public class lzw {
 			while (bReader.ready() && dictionary.size() < maxDictionarySize) {
 				char C = (char) bReader.read();
 				
-				if (dictionary.contains(P+C)) {
+				if (dictionary.containsKey(P+C)) {
 					P=P+C;
 				}
 				else {
-					bWriter.write (dictionary.indexOf(P) + " ");
-					codestream.add(dictionary.indexOf(P));
-					dictionary.add(P+C);
+					//something is wrong, fix
+					bWriter.write (dictionary.get(P) + " ");
+					codestream.add(dictionary.get(P));
+					dictionary.put(P+C, (Integer)(dictionary.size()));
 					P=Character.toString(C);
 				}
 			}
 			
 			//cover last read
-			bWriter.write (dictionary.indexOf(P) + " ");
-			codestream.add(dictionary.indexOf(P));
+			bWriter.write (dictionary.get(P) + " ");
+			codestream.add(dictionary.get(P));
 			
 			//if dictionary reaches chosen bit limit
 			if(dictionary.size() >= maxDictionarySize) {
@@ -86,6 +90,7 @@ public class lzw {
 			
 			bWriter.close();//Close readers and writers to release system resources
 			bReader.close();
+			
 		}
 		catch (Exception exe) {//Executes exception if an error is found in the try block
 			exe.printStackTrace();
@@ -95,6 +100,17 @@ public class lzw {
 		//System.out.println(codestream);
 		System.out.println("codestream size: " + codestream.size());
 	}
+	
+	private HashMap<String, Integer> arrayListToHashMap(ArrayList<String> arrayList)
+	{
+		HashMap<String, Integer> hashMap = new HashMap<String, Integer>();
+		for(int i = 0; i < arrayList.size(); i++)
+		{
+			hashMap.put(arrayList.get(i), i);
+		}
+		return hashMap;
+	}
+	
 	
 	//Reads .txt file containing codestream and transfers all codes into an ArrayList
 	//runs in O(characters in file)
