@@ -7,7 +7,6 @@ public class lzw {
 
 	//TODO:
 	//Document all the things, including time complexity
-	//remove magic number 256
 	private static String fileToEncodeName;
 	//Maximum size of table (1024 for 10 bits)
 	private final int MAX_DICTIONARY_SIZE = 9999999;
@@ -45,7 +44,7 @@ public class lzw {
 	private HashMap<Integer, String> initializeDictionaryForDecode() {
 		HashMap<Integer, String> dictionary = new HashMap<Integer, String>();
 
-		for(int i = 0; i < 256; i++) {
+		for(int i = 0; i < DICTIONARY_SIZE; i++) {
 			dictionary.put(i, "" + (char) i);
 		}
 
