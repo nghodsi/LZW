@@ -70,7 +70,7 @@ public class lzw {
 					previousChar=previousChar+currentChar;
 				}
 				else {
-					//something is wrong, fix
+					
 					bWriter.write (dictionary.get(previousChar) + " ");
 					codestream.add(dictionary.get(previousChar));
 					dictionary.put(previousChar+currentChar, (Integer)(dictionary.size()));
@@ -97,8 +97,8 @@ public class lzw {
 			bReader.close();
 
 		}
-		catch (Exception exe) {//Executes exception if an error is found in the try block
-			exe.printStackTrace();
+		catch (Exception e) {//Executes exception if an error is found in the try block
+			e.printStackTrace();
 		}
 
 		//do not print codestream when testing really large files unless you have infinitely big dictionary/dictionary reset implemented
