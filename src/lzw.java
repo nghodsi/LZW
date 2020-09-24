@@ -1,3 +1,5 @@
+package src;
+
 import java.util.*;
 import java.io.*;
 
@@ -8,7 +10,9 @@ public class lzw {
 	//remove magic number 256
 	private static String fileToEncodeName;
 	//Maximum size of table (1024 for 10 bits)
-	private final int maxDictionarySize = 9999999;
+	private final int MAX_DICTIONARY_SIZE = 9999999;
+	private final int DICTIONARY_SIZE = 256;
+	
 
 	public void encode () {
 		Scanner keyboard = new Scanner(System.in); //Asks the user for the file name and saves it as a String
@@ -27,7 +31,7 @@ public class lzw {
 	//O(1)
 	private ArrayList<String> initializeDictionaryForEncode() {
 		//Size 1024 for 10 bits
-		ArrayList<String> dictionary = new ArrayList<String>(maxDictionarySize);
+		ArrayList<String> dictionary = new ArrayList<String>(MAX_DICTIONARY_SIZE);
 
 		for (int i = 0; i<256;i++) {
 			dictionary.add (""+(char)i);
@@ -59,7 +63,7 @@ public class lzw {
 			//Creates output file called lzwOutput.txt
 			BufferedWriter bWriter = new BufferedWriter(new FileWriter(new File("lzwOutput.txt")));
 
-			while (bReader.ready() && dictionary.size() < maxDictionarySize) {
+			while (bReader.ready() && dictionary.size() < MAX_DICTIONARY_SIZE) {
 				char currentChar = (char) bReader.read();
 
 				if (dictionary.containsKey(previousChar+currentChar)) {
@@ -79,7 +83,7 @@ public class lzw {
 			codestream.add(dictionary.get(previousChar));
 
 			//if dictionary reaches chosen bit limit
-			if(dictionary.size() >= maxDictionarySize) {
+			if(dictionary.size() >= MAX_DICTIONARY_SIZE) {
 				System.out.println("Maximum dictionary size (" +  dictionary.size() + ") reached - stopping compression");
 
 				while(bReader.ready()) {
@@ -145,17 +149,17 @@ public class lzw {
 
 	//Decodes codestream and rebuilds dictionary
 	private void decodeCodestream(String fileName, HashMap<Integer, String> dictionary, ArrayList<Integer> codestreamList) {
-		int dictionarySize = 256;
+		
 		String w = "" + (char) (int) codestreamList.remove(0);
 		StringBuffer decodedCodestream = new StringBuffer(w);
-
+		
 		for(int value : codestreamList) {
 			String currentEntry;
 
 			if(dictionary.containsKey(value)) {
 				currentEntry = dictionary.get(value);
 			}
-			else if(value == dictionarySize) {
+			else if(value == dictionary.size()) {
 				currentEntry = w + w.charAt(0);
 			}
 			else {
@@ -163,9 +167,9 @@ public class lzw {
 			}
 
 			decodedCodestream.append(currentEntry);
-
 			//rebuilds the dicitionary by adding the new string
-			dictionary.put(dictionarySize++, w + currentEntry.charAt(0));
+			dictionary.put(dictionary.size(), w + currentEntry.charAt(0));
+			
 			w = currentEntry;
 		}
 
