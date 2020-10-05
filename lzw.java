@@ -6,7 +6,7 @@ public class lzw {
 	//Maximum size of table (1024 for 10 bits)
 	private final int maxDictionarySize = 1024;
 	
-	public void encode () {
+	private void encode () {
 		Scanner keyboard = new Scanner(System.in); //Asks the user for the file name and saves it as a String
         System.out.print("Enter filename here: ");
         fileToEncodeName = keyboard.next();
@@ -182,7 +182,12 @@ public class lzw {
 	public static void main (String [] args) {
 		lzw cipher = new lzw ();
 		cipher.encode();
+		
+		long startTime = System.nanoTime();
 		cipher.decode("lzwOutput.txt");
+		long endTime = System.nanoTime();
+		
+		System.out.println("Decode execution time (milliseconds): " + (endTime - startTime));
 		System.out.println(cipher.checkDecodedFile("decodedFile.txt", fileToEncodeName));
 	}
 }
