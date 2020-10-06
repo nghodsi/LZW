@@ -1,0 +1,13 @@
+/bin/
+*.class
+
+.classpath
+
+.project
+
+.DS_Store
+*.class
+bin/lzw.class
+decodedFile.txt
+fileToDecode.txt
+lzwOutput.txt
