@@ -11,8 +11,6 @@ import java.io.*;
 
 public class LZW{
 
-	//TODO:
-	//Document all the things, including time complexity
 	public static String fileToEncodeName;
 	//Maximum size of table (1024 for 10 bits)
 	private final int MAX_DICTIONARY_SIZE = 9999999;
