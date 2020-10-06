@@ -9,7 +9,7 @@ package src;
 import java.util.*;
 import java.io.*;
 
-public class lzw{
+public class LZW{
 
 	//TODO:
 	//Document all the things, including time complexity
@@ -22,11 +22,11 @@ public class lzw{
 	 * Asks the user for the file they want to encode
 	 * Then uses helper encoding methods to execute the encoding process
 	 */
-	public void encode(){
+	public void Encode(){
 		Scanner keyboard = new Scanner(System.in); 
 		//Asks the user for the file name and saves it as a String
-        System.out.print("Enter filename here: ");
-        fileToEncodeName = keyboard.next();
+        	System.out.print("Enter filename here: ");
+        	fileToEncodeName = keyboard.next();
 		keyboard.close();
 
 		generateCodestream(fileToEncodeName, initializeDictionaryForEncode());
@@ -36,7 +36,7 @@ public class lzw{
 	 * Decodes the inputted the file
 	 * Uses the decoding helper methods to execute the decoding process
 	 */
-	public void decode(String fileName){
+	public void Decode(String fileName){
 		decodeCodestream(fileName, initializeDictionaryForDecode(), catalogCodestream(fileName));
 	}
 
@@ -46,7 +46,7 @@ public class lzw{
 	 * Adds the first 256 (0-255) chars in the ascii table to the ArrayList dictionary
 	 * Used for encoding
 	 */
-	public ArrayList<String> initializeDictionaryForEncode(){
+	public ArrayList<String> InitializeDictionaryForEncode(){
 		//Size 1024 for 10 bits
 		ArrayList<String> dictionary = new ArrayList<String>(MAX_DICTIONARY_SIZE);
 
@@ -63,7 +63,7 @@ public class lzw{
 	 * Adds the first 256 (0-255) chars in the ascii table to theh HashMap dictionary
 	 * Used for decoding
 	 */
-	public HashMap<Integer, String> initializeDictionaryForDecode(){
+	public HashMap<Integer, String> InitializeDictionaryForDecode(){
 		HashMap<Integer, String> dictionary = new HashMap<Integer, String>();
 
 		for(int i = 0; i < DICTIONARY_SIZE; i++){
@@ -79,7 +79,7 @@ public class lzw{
 	 * Takes in the text file name and the arraylist dictionary
 	 * Encodes the text and outputs the codes onto a file called "lzwOutput.txt"
 	 */
-	public void generateCodestream(String fileName, ArrayList<String> dictionaryAsArrayList){
+	public void GenerateCodestream(String fileName, ArrayList<String> dictionaryAsArrayList){
 		ArrayList<Integer> codestream = new ArrayList<Integer>();
 		String previousChar = "";
 		HashMap<String, Integer> dictionary = arrayListToHashMap(dictionaryAsArrayList);
@@ -108,7 +108,7 @@ public class lzw{
 			codestream.add(dictionary.get(previousChar));
 
 			//if dictionary reaches chosen bit limit
-			if(dictionary.size() >= MAX_DICTIONARY_SIZE) {
+			if(dictionary.size() >= MAX_DICTIONARY_SIZE){
 				System.out.println("Max dictionary size ("+dictionary.size()+") reached-stopping compression");
 
 				while(bReader.ready()){
@@ -136,7 +136,7 @@ public class lzw{
 	/**
 	 * converts an ArrayList arrayList to a HashMap with key-value pairs (aList[i], i).
 	 */
-	public HashMap<String, Integer> arrayListToHashMap(ArrayList<String> arrayList){
+	public HashMap<String, Integer> ArrayListToHashMap(ArrayList<String> arrayList){
 		HashMap<String, Integer> hashMap = new HashMap<String, Integer>();
 		for(int i = 0; i < arrayList.size(); i++){
 			hashMap.put(arrayList.get(i), i);
@@ -148,7 +148,7 @@ public class lzw{
 	/**
 	 * Reads .txt file containing codestream and transfers all codes into an ArrayList
 	 */
-	public ArrayList<Integer> catalogCodestream(String fileName){
+	public ArrayList<Integer> CatalogCodestream(String fileName){
 		ArrayList<Integer> codestreamList = new ArrayList<Integer>();
 		try{
 			BufferedReader codeReader = new BufferedReader(new FileReader(new File(fileName)));
@@ -172,7 +172,7 @@ public class lzw{
 	/**
 	 * Rebuilds the dictionary using the arraylist of codes
 	 */
-	public void decodeCodestream(String fileName,HashMap<Integer,String>dictionary,ArrayList<Integer>codestreamList){
+	public void DecodeCodestream(String fileName,HashMap<Integer,String>dictionary,ArrayList<Integer>codestreamList){
 		
 		String w = "" + (char) (int) codestreamList.remove(0);
 		StringBuffer decodedCodestream = new StringBuffer(w);
@@ -211,7 +211,7 @@ public class lzw{
 	 * Checks decoded file with file that was originally encoded (the unencoded version)
 	 * Makes sure that everything did what it was supposed to do
 	 */
-	public boolean checkDecodedFile(String unencodedFileName, String decodedFileName){
+	public boolean CheckDecodedFile(String unencodedFileName, String decodedFileName){
 		try{
 			BufferedReader unencodedFileReader=new BufferedReader(new FileReader(new File(unencodedFileName)));
 			BufferedReader decodedFileReader=new BufferedReader(new FileReader(new File(decodedFileName)));
